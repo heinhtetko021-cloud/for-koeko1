@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Ocean Journey ❤️</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@400;600&family=Playfair+Display:ital@1&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --ocean-blue: #0077be;
+            --deep-sea: #001f3f;
+            --foam-white: rgba(255, 255, 255, 0.85);
+            --sand-gold: #f4e4bc;
+            --dark-text: #002b36;
+            --bento-radius: 24px;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            /* ပင်လယ်အရောင် Gradient */
+            background: linear-gradient(180deg, #e0f7fa 0%, #80deea 50%, #f4e4bc 100%);
+            color: var(--dark-text);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- BUBBLE EFFECT (Ocean Style) --- */
+        .bubble {
+            position: fixed;
+            bottom: -50px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1;
+            animation: rise 10s infinite ease-in;
+        }
+
+        @keyframes rise {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+
+        /* --- MOUSE TRAIL (Shells & Stars) --- */
+        .sparkle {
+            position: fixed; pointer-events: none; z-index: 9999;
+            font-size: 20px; animation: sparkle-fade 1.2s forwards;
+        }
+        @keyframes sparkle-fade {
+            0% { transform: scale(0); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: scale(1.2) translateY(-30px); opacity: 0; }
+        }
+
+        /* --- GATED SCREENS --- */
+        .gated-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: #e0f7fa;
+            z-index: 2000; transition: 1s ease-in-out;
+        }
+
+        .login-card {
+            text-align: center; width: 90%; max-width: 400px;
+            padding: 40px;
+            background: var(--foam-white);
+            border: 3px solid var(--ocean-blue);
+            border-radius: 30px;
+            box-shadow: 0 15px 45px rgba(0, 119, 190, 0.2);
+        }
+
+        #timer {
+            font-family: 'Fredoka One', sans-serif;
+            font-size: 3rem;
+            background: linear-gradient(to right, var(--ocean-blue), var(--deep-sea));
+            -webkit-text-fill-color: transparent;
+            margin: 20px 0;
+        }
+
+        /* --- MAIN CONTENT --- */
+        #main-content { display: none; opacity: 0; transition: 1.5s; }
+
+        .parallax-bg {
+            height: 50vh;
+            background: linear-gradient(rgba(0,31,63,0.4), rgba(0,31,63,0.4)), url('photo/hero-bg.jpg');
+            background-size: cover; background-position: center;
+            background-attachment: fixed;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 0 0 80px 80px;
+            border-bottom: 8px solid var(--ocean-blue);
+        }
+
+        .parallax-bg h1 { 
+            font-family: 'Fredoka One'; font-size: 3.5rem; color: white; 
+            text-shadow: 0 5px 15px rgba(0,0,0,0.5); text-align: center; 
+        }
+
+        .bento-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            max-width: 1200px;
+            margin: -50px auto 40px;
+            padding: 20px;
+            position: relative; z-index: 10;
+        }
+
+        .bento-item {
+            background: var(--foam-white);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 119, 190, 0.2);
+            border-radius: var(--bento-radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            padding: 30px;
+            transition: 0.3s;
+        }
+
+        .bento-item:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0, 119, 190, 0.15); }
+
+        .full-width { grid-column: span 4; }
+        .half-width { grid-column: span 2; }
+
+        /* Letter Styling (Ocean Wave Style) */
+        .letter-container { 
+            border-left: 10px solid var(--ocean-blue); 
+            background: #f0fbfc; 
+        }
+        .letter-text {
+            font-family: 'Dancing Script', cursive; font-size: 1.6rem;
+            line-height: 1.8; color: var(--deep-sea);
+        }
+
+        /* Progress Bar (Water Fill) */
+        .meter-bar { height: 15px; background: #d0eef2; border-radius: 20px; margin-top: 20px; overflow: hidden; }
+        .meter-fill { 
+            height: 100%; 
+            background: linear-gradient(90deg, #4fc3f7, var(--ocean-blue)); 
+            width: 0%; transition: 3s ease-out; 
+        }
+
+        /* Images/Videos */
+        .memory-card { padding: 12px; background: white; border: 1px solid #eee; }
+        .memory-card img, .memory-card video { 
+            width: 100%; height: 260px; object-fit: cover; 
+            border-radius: 15px; 
+        }
+
+        /* Floating Buttons */
+        .love-note-btn {
+            background: var(--ocean-blue); color: white; border: none; padding: 12px 25px;
+            margin: 5px; border-radius: 50px; cursor: pointer; font-weight: 600;
+            transition: 0.3s;
+        }
+        .love-note-btn:hover { background: var(--deep-sea); transform: scale(1.05); }
+
+        .music-player {
+            position: fixed; bottom: 30px; right: 30px; 
+            background: var(--deep-sea); color: white;
+            padding: 12px 25px; border-radius: 50px; display: flex; align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3); z-index: 1000;
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .bento-container { grid-template-columns: 1fr; margin-top: 20px; }
+            .full-width, .half-width { grid-column: span 1; }
+            .parallax-bg h1 { font-size: 2.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bubbles-container"></div>
+
+    <div id="countdown-screen" class="gated-screen">
+        <div class="login-card">
+            <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Diving into May 01, 2026 🌊</h2>
+            <div id="timer">Loading...</div>
+            <p style="color: #555;">Our ocean of love is waiting...</p>
+        </div>
+    </div>
+
+    <div id="password-screen" class="gated-screen hidden">
+        <div class="login-card">
+            <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Unlock the Treasure</h2>
+            <p>Enter our special date (DDMMYY)</p>
+            <input type="password" id="pwInput" placeholder="DDMMYY" maxlength="6" 
+                    style="width:80%; padding:15px; border-radius:50px; border:2px solid var(--ocean-blue); text-align:center; font-size:1.5rem; letter-spacing:5px; outline: none;">
+            <button onclick="unlockSite()" style="margin-top:20px; background:var(--ocean-blue); color:white; border:none; padding:15px 40px; border-radius:50px; cursor:pointer; font-weight: bold; width: 100%;">Dive In</button>
+        </div>
+    </div>
+
+    <div id="main-content">
+        <div class="parallax-bg">
+            <h1 data-aos="fade-down">Happy 10 Months Anniversary! 🌊</h1>
+        </div>
+
+        <div class="bento-container">
+            <div class="bento-item half-width" data-aos="fade-right">
+                <h3 style="margin:0; color: var(--ocean-blue);">Ocean of Days</h3>
+                <div id="dayCounter" style="font-size: 2.2rem; font-weight: bold; color: var(--deep-sea); margin-top:10px;">0 Days</div>
+                <div class="meter-bar"><div id="meterFill" class="meter-fill"></div></div>
+                <p id="meterPercent" style="margin-top:10px; font-weight:600;">Deep Love Level: Infinite 💙</p>
+            </div>
+
+            <div class="bento-item half-width" data-aos="fade-left">
+                <h3 style="margin:0; color: var(--ocean-blue);">Messages in a Bottle</h3>
+                <div style="display: flex; flex-wrap: wrap; margin-top: 15px;">
+                    <button class="love-note-btn" onclick="alert('You are my anchor! ⚓')">Bottle 1</button>
+                    <button class="love-note-btn" onclick="alert('I love you more than all the fish in the sea! 🐠')">Bottle 2</button>
+                    <button class="love-note-btn" onclick="alert('Ready for more waves with you! 🌊')">Bottle 3</button>
+                </div>
+            </div>
+
+            <div class="bento-item full-width letter-container" data-aos="fade-up">
+                <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">To My Dearest Pookie,</h2>
+                <div class="letter-text">
+                    Happy 10month Anniversaryပါကိုးကိုရေ❤️‍🩹
+                    ဘာပဲဖြစ်''အားမငယ်နဲ့နော်👩‍❤️‍💋‍👨
+                    အနားမှာရှိနေမပေးနိုင်ပေးမယ့် 
+                    မေတ္တာတွေ နွေးထွေးမှုတွေအပြည့်အဝ ပေးနေမှာပါဗျ💞
+                    ပူတူးလေးရဲ့နှလုံးသားထဲမှာ ကိုးးကိုပြည့်ကောင်းလျှံကအမြဲနေရာယူထားတာပါနော် ဟီး''🙊🤍
+                    ကိုးကိုနဲ့တွေ့ရမယ့် ရက်ကိုစောင့်စားရင်းနဲ့ပဲ နေ့ရက်တိုင်းကိုဖြတ်သန်းနေပါတယ်ဗျာ✨
+                    10month ဆိုတာ အချိန်တိုမဟုတ်ပါဘူး ဒါပေမယ့် ကိုးကိုနဲ့ဆို နောက်ထပ်month တွေ year တွေပါ အတူတူဖြတ်သန်းချင်တယ်ဗျ🖇
+                    ယုံကြည်မှုလေးနဲ့ရှေ့ဆက်ရင်း တစ်နေ့နီးမှာပါနော်💞
+                    ❤️‍🩹ကိုးးကိုအနားမှာပူတူးလေးအမြဲရှိနေပေးမယ်နော်❤️‍🩹
+                    အစ''အရာ''ဂရုစိုက်ပါဗျ🎀
+                    အာဘွား  များကြီး''ချစ်တယ်​ ကိုးးကိုအရူးလေးရေ💝
+                </div>
+                <p style="text-align: right; font-family: 'Dancing Script'; font-size: 1.8rem; color: var(--ocean-blue);">- Always Yours, Pookie</p>
+            </div>
+
+            <div class="bento-item memory-card" data-aos="zoom-in">
+                <video autoplay loop muted playsinline><source src="IMG_1187.mp4" type="video/mp4"></video>
+                <p>Deeply in Love ❤️</p>
+            </div>
+            <div class="bento-item memory-card" data-aos="zoom-in" data-aos-delay="100">
+                <img src="photo_2026-05-07_17-56-14.jpg"><p>Favorite Date 🍦</p>
+            </div>
+            <div class="bento-item memory-card" data-aos="zoom-in" data-aos-delay="200">
+                <img src="photo_2026-05-07_17-56-52.jpg"><p>Special Moment ✨</p>
+            </div>
+            <div class="bento-item memory-card" data-aos="zoom-in" data-aos-delay="300">
+                <img src="photo_2026-05-07_17-57-02.jpg"><p>Your Smile 😊</p>
+            </div>
+
+            <div class="bento-item full-width letter-container" data-aos="fade-up">
+                <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Our First Wave...</h2>
+                <div class="letter-text">
+                    ကိုးးကိုနဲ့ပူတူးလေးနဲ့စသိတာက ကျောင်းမှာနော် အဲ့တုန်းက ပူတူးရဲ့ကောင်လေးမဖြစ်သေးဝူး 🙊စ''တေွ့တုန်းကဆို ပူတူးရောကိုးးကိုရောရှက်နေကြတာ ပြီးတော့ပူတူးလေးကို ကိုးးကိုက ကန်တင်းထဲကဆိုင်မှာ အအေးသောက်မလား'' မေးတော့ ပူတူးကြားတယ် ဒါမဲ့ရှက်လို ဘာမှပြန်မပြောတာကွယ် ဟီး''🙈 အဲ့နေ့မှာပဲပူတူးလေးတိုအမှတ်တရတွေများကြီးဖြစ်ခဲ့ပါတယ်ဗျာ🤍
+                    ကိုးးကိုတိုအဲ့နေ့ကျမှPresentationရှိတယ်ဆိုပဲ group လိုက်လုပ်ရတဲ့ဟာ ပူတူးကလည်း အိမ်ပြန်ချိန် က3:00ဆိုတော့ ကိုးးကိုတိုလာမှပြန်ရမှာလေ
+                    အဲ့တာနဲ့ဖုန်းတွေအသေဆက်တာကိုးးကိုတိုက ပြီးတော့မယ်''နဲ့ဂျင်းထည့်တာ😭
+                    4နာရီထိုးခါနီးမှပြီးကြတယ် ဗျာ အဲ့တာနဲ့အိမ်ပြန်ကြရော မှတ်တိုင်နားရောက်တော့ပူတူး က ကားလမ်းမကူးတတ်ဘူးကွာ အဲ့တာနဲ့ကိုးးကိုကလိုက်ကူးပေးတာ ဟီးး''🙈🙈 
+                    ပူတူးလေး အဲ့တာလေးတွေတွေးရင်ပြန်ပြီးကြည်နူးမိပါတယ်လို✨
+                    ပူတူးလေး လုံးဝမမေ့ပါဘူး စတွေ့တဲ့ရက်လေးကို အမှတ်တရပေါင်းများစွာနဲ့ ပျော်ဖိုကောင်းတယ် ဟဲ'' များကြီး''ချစ်တယ် ကိုးးကိုကောက်ကြီးရေ💋❤️
+                </div>
+            </div>
+
+            <div class="bento-item half-width memory-card" data-aos="fade-right">
+                <video style="height: 300px;" autoplay muted loop playsinline><source src="IMG_2312.mp4" type="video/mp4"></video>
+                <p>Sweet Waves 🎥</p>
+            </div>
+            <div class="bento-item half-width memory-card" data-aos="fade-left">
+                <img src="photo_2026-05-07_17-57-06.jpg" style="height: 300px;"><p>Together Forever 🌍</p>
+            </div>
+        </div>
+
+        <div class="music-player">
+            <span style="margin-right:15px; font-weight: bold; font-size: 0.8rem;">🎵 OCEAN MELODY</span>
+            <button onclick="toggleMusic()" id="musicBtn" style="border:none; background:var(--ocean-blue); color:white; border-radius:50%; width:40px; height:40px; cursor:pointer;">▶️</button>
+            <audio id="anniMusic" loop src="ssstik.io_1778154380273.mp3"></audio>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // --- 1. CREATE BUBBLES ---
+        function createBubbles() {
+            const container = document.getElementById('bubbles-container');
+            for (let i = 0; i < 20; i++) {
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                const size = Math.random() * 40 + 10 + 'px';
+                bubble.style.width = size;
+                bubble.style.height = size;
+                bubble.style.left = Math.random() * 100 + 'vw';
+                bubble.style.animationDuration = Math.random() * 5 + 5 + 's';
+                bubble.style.animationDelay = Math.random() * 5 + 's';
+                container.appendChild(bubble);
+            }
+        }
+        createBubbles();
+
+        // --- 2. MOUSE TRAIL (Sea Theme) ---
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() > 0.8) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.innerHTML = ['🐚', '⭐', '💧', '🌊'][Math.floor(Math.random()*4)];
+                sparkle.style.left = e.clientX + 'px';
+                sparkle.style.top = e.clientY + 'px';
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1200);
+            }
+        });
+
+        // --- 3. COUNTDOWN ---
+        const targetDate = new Date("May 01, 2026 00:00:00").getTime();
+        const timerInterval = setInterval(() => {
+            const diff = targetDate - new Date().getTime();
+            if (diff <= 0) {
+                clearInterval(timerInterval);
+                document.getElementById('countdown-screen').classList.add('hidden');
+                document.getElementById('password-screen').classList.remove('hidden');
+            } else {
+                const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), 
+                    m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
+                document.getElementById("timer").innerText = `${d}d:${h}h:${m}m:${s}s`;
+            }
+        }, 1000);
+
+        // --- 4. UNLOCK ---
+        function unlockSite() {
+            if(document.getElementById('pwInput').value === "140526") {
+                document.getElementById('password-screen').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('password-screen').classList.add('hidden');
+                    const main = document.getElementById('main-content');
+                    main.style.display = 'block';
+                    setTimeout(() => { 
+                        main.style.opacity = '1'; 
+                        AOS.init({ duration: 1200, once: true });
+                        startCalculations();
+                    }, 50);
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#0077be', '#80deea', '#ffffff'] });
+                }, 800);
+            } else { alert("Wrong Date Pookie! 🌊"); }
+        }
+
+        // --- 5. CALCS ---
+        function startCalculations() {
+            const days = Math.floor((new Date() - new Date("July 14, 2025")) / 86400000);
+            document.getElementById('dayCounter').innerText = days + " Days Together";
+            setTimeout(() => { document.getElementById('meterFill').style.width = "100%"; }, 500);
+        }
+
+        // --- 6. MUSIC ---
+        const audio = document.getElementById('anniMusic');
+        function toggleMusic() {
+            if (audio.paused) { audio.play(); document.getElementById('musicBtn').innerText = "⏸️"; }
+            else { audio.pause(); document.getElementById('musicBtn').innerText = "▶️"; }
+        }
+    </script>
+</body>
+</html>
