@@ -10,6 +10,129 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
+        /* --- STICKER POPUP FEATURE --- */
+
+.sticker-btn{
+    position: fixed;
+    left: 20px;
+    z-index: 1500;
+    width: 75px;
+    height: 75px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 2rem;
+    background: rgba(255,255,255,0.9);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.sticker-btn:hover{
+    transform: scale(1.1) rotate(5deg);
+}
+
+#openWish1{
+    bottom: 120px;
+}
+
+#openWish2{
+    bottom: 210px;
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7); /* နောက်ခံကို ပိုမှောင်လိုက်တာ စာဖတ်လိုကောင်းအောင် */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease;
+    backdrop-filter: blur(5px); /* နောက်ခံကို ဝါးလိုက်တာ ပို professional ဆန်သွားအောင် */
+}
+
+.popup-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.popup-card {
+    width: 90%;
+    max-width: 500px;
+    max-height: 80vh;
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    position: relative;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    animation: popupShow 0.4s ease;
+
+    scrollbar-width: none;
+}
+
+.popup-card::-webkit-scrollbar{
+    display:none;
+}
+/* စာသားတွေအတွက် သီးသန့် scroll ဆောက်ပေးရမယ် */
+.popup-content {
+    overflow-y: auto;
+    width: 100%;
+    padding-top: 10px; /* ခလုတ်နဲ့ မကပ်အောင် */
+    word-wrap: break-word;
+}
+
+.popup-card p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #444;
+    text-align: justify;
+    margin: 0 0 15px 0;
+    width: 100%;
+}
+
+.close-popup {
+    position: absolute;
+    /* ခလုတ်ကို ကဒ်ရဲ့ အပြင်ဘက်ကို နည်းနည်းရောက်အောင် ထုတ်လိုက်တာ ပိုမြင်သာစေတယ် */
+    top: 8px; 
+    right: 8px;
+    border: 4px solid white; /* အဖြူရောင် ဘောင်လေးခံထားရင် ပိုလှတယ် */
+    background: crimson;
+    color: white;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transition: 0.3s;
+}
+
+.close-popup:hover {
+    transform: scale(1.1);
+    background: #ff0000;
+}
+
+@keyframes popupShow {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
         :root {
             --ocean-blue: #0077be;
             --deep-sea: #001f3f;
@@ -77,6 +200,7 @@
             font-family: 'Fredoka One', sans-serif;
             font-size: 3rem;
             background: linear-gradient(to right, var(--ocean-blue), var(--deep-sea));
+            -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 20px 0;
         }
@@ -179,7 +303,7 @@
 
     <div id="countdown-screen" class="gated-screen">
         <div class="login-card">
-            <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Diving into May 01, 2026 🌊</h2>
+            <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Diving into May 14, 2026 🌊</h2>
             <div id="timer">Loading...</div>
             <p style="color: #555;">Our ocean of love is waiting...</p>
         </div>
@@ -217,16 +341,22 @@
                 </div>
             </div>
 
-            <div class="bento-item full-width letter-container" data-aos="fade-up">
+            <div id="wishCard1" class="bento-item full-width letter-container hidden" data-aos="fade-up">
                 <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">To My Dearest Pookie,</h2>
                 <div class="letter-text">
                     Happy 10month Anniversaryပါကိုးကိုရေ❤️‍🩹
                     ဘာပဲဖြစ်''အားမငယ်နဲ့နော်👩‍❤️‍💋‍👨
                     အနားမှာရှိနေမပေးနိုင်ပေးမယ့် 
                     မေတ္တာတွေ နွေးထွေးမှုတွေအပြည့်အဝ ပေးနေမှာပါဗျ💞
-                    ပူတူးလေးရဲ့နှလုံးသားထဲမှာ ကိုးးကိုပြည့်ကောင်းလျှံကအမြဲနေရာယူထားတာပါနော် ဟီး''🙊🤍
+                    <br>
+
+                    ပူတူးလေးရဲ့နှလုံးသားထဲမှာ 
+                    ကိုးးကိုပြည့်ကောင်းလျှံကအမြဲနေရာယူထားတာပါနော် ဟီး''🙊🤍
                     ကိုးကိုနဲ့တွေ့ရမယ့် ရက်ကိုစောင့်စားရင်းနဲ့ပဲ နေ့ရက်တိုင်းကိုဖြတ်သန်းနေပါတယ်ဗျာ✨
-                    10month ဆိုတာ အချိန်တိုမဟုတ်ပါဘူး ဒါပေမယ့် ကိုးကိုနဲ့ဆို နောက်ထပ်month တွေ year တွေပါ အတူတူဖြတ်သန်းချင်တယ်ဗျ🖇
+                    10month ဆိုတာ အချိန်တိုမဟုတ်ပါဘူး ဒါပေမယ့် ကိုးကိုနဲ့ဆို 
+                    နောက်ထပ်month တွေ year တွေပါ အတူတူဖြတ်သန်းချင်တယ်ဗျ🖇
+                    <br>
+
                     ယုံကြည်မှုလေးနဲ့ရှေ့ဆက်ရင်း တစ်နေ့နီးမှာပါနော်💞
                     ❤️‍🩹ကိုးးကိုအနားမှာပူတူးလေးအမြဲရှိနေပေးမယ်နော်❤️‍🩹
                     အစ''အရာ''ဂရုစိုက်ပါဗျ🎀
@@ -249,15 +379,24 @@
                 <img src="photo_2026-05-07_17-57-02.jpg"><p>Your Smile 😊</p>
             </div>
 
-            <div class="bento-item full-width letter-container" data-aos="fade-up">
+            <div id="wishCard2" class="bento-item full-width letter-container hidden" data-aos="fade-up">
                 <h2 style="font-family: 'Fredoka One'; color: var(--ocean-blue);">Our First Wave...</h2>
                 <div class="letter-text">
-                    ကိုးးကိုနဲ့ပူတူးလေးနဲ့စသိတာက ကျောင်းမှာနော် အဲ့တုန်းက ပူတူးရဲ့ကောင်လေးမဖြစ်သေးဝူး 🙊စ''တေွ့တုန်းကဆို ပူတူးရောကိုးးကိုရောရှက်နေကြတာ ပြီးတော့ပူတူးလေးကို ကိုးးကိုက ကန်တင်းထဲကဆိုင်မှာ အအေးသောက်မလား'' မေးတော့ ပူတူးကြားတယ် ဒါမဲ့ရှက်လို ဘာမှပြန်မပြောတာကွယ် ဟီး''🙈 အဲ့နေ့မှာပဲပူတူးလေးတိုအမှတ်တရတွေများကြီးဖြစ်ခဲ့ပါတယ်ဗျာ🤍
+                    ကိုးးကိုနဲ့ပူတူးလေးနဲ့စသိတာက ကျောင်းမှာနော် အဲ့တုန်းက ပူတူးရဲ့ကောင်လေးမဖြစ်သေးဝူး စ''တွေ့တုန်းကဆို ပူတူးရောကိုးးကိုရောရှက်နေကြတာ ပြီးတော့ပူတူးလေးကို ကိုးးကိုက ကန်တင်းထဲကဆိုင်မှာ အအေးသောက်မလား'' မေးတော့ ပူတူးကြားတယ် ဒါမဲ့ရှက်လို ဘာမှပြန်မပြောတာကွယ် ဟီး''🙈 
+                    <br>
+
+                    အဲ့နေ့မှာပဲပူတူးလေးတိုအမှတ်တရတွေများကြီးဖြစ်ခဲ့ပါတယ်ဗျာ🤍
+                    <br>
+
                     ကိုးးကိုတိုအဲ့နေ့ကျမှPresentationရှိတယ်ဆိုပဲ group လိုက်လုပ်ရတဲ့ဟာ ပူတူးကလည်း အိမ်ပြန်ချိန် က3:00ဆိုတော့ ကိုးးကိုတိုလာမှပြန်ရမှာလေ
-                    အဲ့တာနဲ့ဖုန်းတွေအသေဆက်တာကိုးးကိုတိုက ပြီးတော့မယ်''နဲ့ဂျင်းထည့်တာ😭
-                    4နာရီထိုးခါနီးမှပြီးကြတယ် ဗျာ အဲ့တာနဲ့အိမ်ပြန်ကြရော မှတ်တိုင်နားရောက်တော့ပူတူး က ကားလမ်းမကူးတတ်ဘူးကွာ အဲ့တာနဲ့ကိုးးကိုကလိုက်ကူးပေးတာ ဟီးး''🙈🙈 
+                    အဲ့တာနဲ့ဖုန်းတွေအသေဆက်တာကိုးးကိုတိုက ပြီးတော့မယ်''နဲ့ဂျင်းထည့်တာ
+                    4နာရီထိုးခါနီးမှပြီးကြတယ် ဗျာ အဲ့တာနဲ့အိမ်ပြန်ကြရော မှတ်တိုင်နားရောက်တော့ပူတူး က ကားလမ်းမကူးတတ်ဘူးကွာ အဲ့တာနဲ့ကိုးးကိုကလိုက်ကူးပေးတာ ဟီးး'' 
                     ပူတူးလေး အဲ့တာလေးတွေတွေးရင်ပြန်ပြီးကြည်နူးမိပါတယ်လို✨
-                    ပူတူးလေး လုံးဝမမေ့ပါဘူး စတွေ့တဲ့ရက်လေးကို အမှတ်တရပေါင်းများစွာနဲ့ ပျော်ဖိုကောင်းတယ် ဟဲ'' များကြီး''ချစ်တယ် ကိုးးကိုကောက်ကြီးရေ💋❤️
+                    <br>
+
+                    ပူတူးလေး လုံးဝမမေ့ပါဘူး စတွေ့တဲ့ရက်လေးကို 
+                    အမှတ်တရပေါင်းများစွာနဲ့ ပျော်ဖိုကောင်းတယ် ဟဲ'' 
+                    များကြီး''ချစ်တယ် ကိုးးကိုကောက်ကြီးရေ💋
                 </div>
             </div>
 
@@ -276,6 +415,30 @@
             <audio id="anniMusic" loop src="ssstik.io_1778154380273.mp3"></audio>
         </div>
     </div>
+    <!-- STICKER BUTTONS -->
+
+<button class="sticker-btn" id="openWish1">💌</button>
+<button class="sticker-btn" id="openWish2">🌊</button>
+
+<!-- POPUP 1 -->
+
+<div class="popup-overlay" id="popup1">
+    <div class="popup-card">
+        <button class="close-popup" onclick="closePopup('popup1')">✖</button>
+
+        <div id="popupContent1" class="popup-content"></div>
+    </div>
+</div>
+
+<!-- POPUP 2 -->
+
+<div class="popup-overlay" id="popup2">
+    <div class="popup-card">
+        <button class="close-popup" onclick="closePopup('popup2')">✖</button>
+
+        <div id="popupContent2" class="popup-content"></div>
+    </div>
+</div>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
@@ -310,7 +473,7 @@
         });
 
         // --- 3. COUNTDOWN ---
-        const targetDate = new Date("May 01, 2026 00:00:00").getTime();
+        const targetDate = new Date("May 14, 2026 00:00:00").getTime();
         const timerInterval = setInterval(() => {
             const diff = targetDate - new Date().getTime();
             if (diff <= 0) {
@@ -355,6 +518,66 @@
             if (audio.paused) { audio.play(); document.getElementById('musicBtn').innerText = "⏸️"; }
             else { audio.pause(); document.getElementById('musicBtn').innerText = "▶️"; }
         }
+        // --- POPUP FEATURE ---
+
+// --- POPUP FEATURE ---
+
+const wish1 = document.getElementById('wishCard1');
+const wish2 = document.getElementById('wishCard2');
+
+const popupContent1 = document.getElementById('popupContent1');
+const popupContent2 = document.getElementById('popupContent2');
+
+// keep original cards hidden initially
+wish1.classList.add('hidden');
+wish2.classList.add('hidden');
+
+// popup 1
+document.getElementById('openWish1')
+.addEventListener('click', () => {
+
+    popupContent1.innerHTML = wish1.innerHTML;
+
+    document
+    .getElementById('popup1')
+    .classList.add('active');
+});
+
+// popup 2
+document.getElementById('openWish2')
+.addEventListener('click', () => {
+
+    popupContent2.innerHTML = wish2.innerHTML;
+
+    document
+    .getElementById('popup2')
+    .classList.add('active');
+});
+
+function closePopup(id){
+
+    document
+    .getElementById(id)
+    .classList.remove('active');
+}
+
+// close when clicking outside
+document.querySelectorAll('.popup-overlay')
+.forEach(popup => {
+
+    popup.addEventListener('click', (e) => {
+
+        if(e.target === popup){
+            popup.classList.remove('active');
+        }
+    });
+});
+function closePopup(id){
+
+    document
+    .getElementById(id)
+    .classList.remove('active');
+}
     </script>
 </body>
 </html>
